@@ -3,6 +3,8 @@ const app = express();
 
 const PORT = process.env.PORT || 8080;
 
+const employees = {};
+
 // Greeting
 app.get("/greeting", (req, res) => {
   return res.send("Hello world!");
@@ -11,7 +13,7 @@ app.get("/greeting", (req, res) => {
 // Register Employee
 app.post("/employee", (req, res) => {
   const { name, city } = req.body;
-
+  console.log(req.body);
   if (!name || !city) {
     res.status(400).json({ error: "Employee details missing" });
     return;
@@ -26,12 +28,22 @@ app.post("/employee", (req, res) => {
 
 // Get Employee details
 app.get("/employee/:id", (req, res) => {
-  return res.send();
+  const employeeId = req.params.id;
+  if (!employees[employeeId]) {
+    return res
+      .status(404)
+      .json({ message: `Employee with ${employeeId} was not found` });
+  }
+
+  return res.status(200).json({ employees: [employeeId] });
 });
 
 // Get all Employee details
 app.get("/employees/all", (req, res) => {
-  return res.send();
+  console.log(req.body);
+  const employeesList = Object.values(employees);
+
+  return res.send().status(200).json(employeesList);
 });
 
 // Update Employee
