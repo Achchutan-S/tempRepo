@@ -11,8 +11,8 @@ app.get("/greeting", (req, res) => {
 });
 
 // Register Employee
-app.post("/employee", (req, res) => {
-  const { name, city } = req.body;
+app.post("/employee", async (req, res) => {
+  const { city, name } = req.body;
   console.log(req.body);
   if (!name || !city) {
     res.status(400).json({ error: "Employee details missing" });
@@ -27,7 +27,7 @@ app.post("/employee", (req, res) => {
 });
 
 // Get Employee details
-app.get("/employee/:id", (req, res) => {
+app.get("/employee/:id", async (req, res) => {
   const employeeId = req.params.id;
   if (!employees[employeeId]) {
     return res
@@ -39,7 +39,7 @@ app.get("/employee/:id", (req, res) => {
 });
 
 // Get all Employee details
-app.get("/employees/all", (req, res) => {
+app.get("/employees/all", async (req, res) => {
   console.log(req.body);
   const employeesList = Object.values(employees);
 
@@ -47,12 +47,20 @@ app.get("/employees/all", (req, res) => {
 });
 
 // Update Employee
-app.put("/employee/:id", (req, res) => {
-  return res.send();
+app.put("/employee/:id", async (req, res) => {
+  const employeeId = req.params.id;
+  const { city, name } = req.body;
+  if (!employees[employeeId]) {
+    return res
+      .status(404)
+      .json({ message: `Employee with ${employeeId} was not found` });
+  }
+  employees[employeeId] = { ...employees[employeeId], name, city };
+  return res.status(200).json({ employees: [employeeId] });
 });
 
 // Delete Employee
-app.delete("/employee/:id", (req, res) => {
+app.delete("/employee/:id", async (req, res) => {
   return res.send();
 });
 
