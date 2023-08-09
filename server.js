@@ -3,7 +3,7 @@ const app = express();
 
 const PORT = process.env.PORT || 8080;
 
-const employees = {};
+const employees = [];
 
 // Greeting
 app.get("/greeting", (req, res) => {
@@ -21,24 +21,25 @@ app.post("/employee", async (req, res) => {
 
   const employeeId = Math.floor(Math.random() * 90000) + 10000;
 
-  employees[employeeId] = { name, city };
-  return res.status(201).json({ employeeId });
-  return res.send();
+  const newEmployee = { employeeId, name, city };
+  employees.push(newEmployee);
+  return res.send().status(201).json({ newEmployee, status: 201 });
 });
 
 // Get Employee details
 app.get("/employee/:id", async (req, res) => {
   const employeeId = req.params.id;
   if (!employees[employeeId]) {
-    return res
-      .status(404)
-      .json({ message: `Employee with ${employeeId} was not found` });
+    return res.status(404).json({
+      message: `Employee with ${employeeId} was not found`,
+      status: 404,
+    });
   }
 
   return res
     .send()
     .status(200)
-    .json({ employees: [employeeId] });
+    .json({ employees: [employeeId], status: 200 });
 });
 
 // Get all Employee details
