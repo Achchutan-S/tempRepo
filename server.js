@@ -35,7 +35,10 @@ app.get("/employee/:id", async (req, res) => {
       .json({ message: `Employee with ${employeeId} was not found` });
   }
 
-  return res.status(200).json({ employees: [employeeId] });
+  return res
+    .send()
+    .status(200)
+    .json({ employees: [employeeId] });
 });
 
 // Get all Employee details
@@ -56,12 +59,25 @@ app.put("/employee/:id", async (req, res) => {
       .json({ message: `Employee with ${employeeId} was not found` });
   }
   employees[employeeId] = { ...employees[employeeId], name, city };
-  return res.status(200).json({ employees: [employeeId] });
+  return res
+    .send()
+    .status(200)
+    .json({ employees: [employeeId] });
 });
 
 // Delete Employee
 app.delete("/employee/:id", async (req, res) => {
-  return res.send();
+  const employeeId = req.params.id;
+
+  if (!employees[employeeId]) {
+    return res
+      .status(404)
+      .json({ message: `Employee with ${employeeId} was not found` });
+  }
+
+  const deletedEmployee = employees[employeeId];
+  delete employees[employeeId];
+  return res.send().status(200).json(deletedEmployee);
 });
 
 app.listen(PORT, () => {
